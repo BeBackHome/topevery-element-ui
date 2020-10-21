@@ -319,6 +319,9 @@ export default {
     },
     expandChange(row, expandedRows) {
       this.$emit('expandChange', row, expandedRows);
+    },
+    getCubeTbale() {
+      return this.$refs[this.name] && this.$refs[this.name];
     }
   }
 };

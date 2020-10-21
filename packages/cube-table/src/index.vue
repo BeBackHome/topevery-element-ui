@@ -351,9 +351,15 @@ export default {
     }
   },
   methods: {
+    getCubeTbale() {
+      return this.$refs[this.name] && this.$refs[this.name];
+    },
     getTableSelection() {
       const TableSelection = this.$refs[this.name] && this.$refs[this.name].selection || [];
       return deepClone(TableSelection);
+    },
+    toggleRowSelection(row, selected) {
+      this.$refs[this.name] && this.$refs[this.name].toggleRowSelection(row, selected);
     },
     setCurrent(row) {
       this.$refs[this.name] && this.$refs[this.name].setCurrentRow(row);
