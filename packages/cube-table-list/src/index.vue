@@ -227,9 +227,6 @@ export default {
         return;
       }
       this.$request({ url, method: method, [paramsKey]: params }).then((res) => {
-        if (this.createLoading) {
-          this.createLoading.close();
-        }
         const response = res.data;
         if (response[success]) {
           // 判断标识 数据结构是否是分页数据结构
@@ -263,8 +260,8 @@ export default {
                 this.initConfig.pagination.total = result[totalList] || 0;
               }
             } else {
-              this.initConfig.table.data = [];
               this.initConfig.pagination.total = 0;
+              if (loadType === 'page') this.initConfig.table.data = [];
             }
           } else {
             const result = response[data];
@@ -278,10 +275,13 @@ export default {
             }
           }
         }
+        this.$nextTick(() => {
+          if (this.createLoading) this.createLoading.close();
+        });
       }).catch(e => {
-        if (this.createLoading) {
-          this.createLoading.close();
-        }
+        this.$nextTick(() => {
+          if (this.createLoading) this.createLoading.close();
+        });
       });
     },
     handlerReset(searchParams) {
