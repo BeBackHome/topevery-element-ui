@@ -105,7 +105,7 @@ export default {
     return {
       name: 'CubeTable',
       height: 0,
-      loading: true,
+      loading: false,
       initConfig: {
         method: 'POST',
         url: '',
@@ -201,6 +201,7 @@ export default {
         spinner: loadingIcon,
         background: loadingBackground
       });
+      this.loading = true;
     },
     afterLoadSelectFirstFn(list = []) {
       const { initSeletTheFirst } = this.initConfig.table;
@@ -215,6 +216,7 @@ export default {
       page ? this.initConfig.pagination.currentPage = page : this.initConfig.pagination.currentPage = 1;
       const { currentPage, size } = this.initConfig.pagination;
       const params = { pageIndex: currentPage, pageSize: size, ...searchParams, ...this.extraParam };
+      if (this.loading) return;
       this.createLoadingFn();
       if (loadType === 'page') this.initConfig.table.data = [];
       if (!page && loadType === 'list') {
@@ -276,10 +278,12 @@ export default {
           }
         }
         this.$nextTick(() => {
+          this.loading = false;
           if (this.createLoading) this.createLoading.close();
         });
       }).catch(e => {
         this.$nextTick(() => {
+          this.loading = false;
           if (this.createLoading) this.createLoading.close();
         });
       });
