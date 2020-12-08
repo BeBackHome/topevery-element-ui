@@ -12,6 +12,7 @@
       <slot name="topBar" />
     </div>
     <CubeMaxHeight
+      v-loading="loading"
       :height.sync="height"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
@@ -68,8 +69,8 @@
 
 <script>
 
-import debounce from 'throttle-debounce/debounce';
 // import request from 'topevery-element-ui/src/utils/request';
+import debounce from 'throttle-debounce/debounce';
 import { deepMerge } from 'topevery-element-ui/src/utils/index.new';
 import emitter from 'topevery-element-ui/src/mixins/emitter';
 
@@ -78,7 +79,6 @@ import CubeTable from 'topevery-element-ui/packages/cube-table';
 import CubeMaxHeight from 'topevery-element-ui/packages/cube-max-height';
 import ElPagination from 'topevery-element-ui/packages/pagination';
 import Loading from 'topevery-element-ui/packages/loading';
-
 // import { isObject } from '../../utils/types'
 
 export default {
@@ -89,6 +89,9 @@ export default {
     CubeTable,
     CubeMaxHeight,
     ElPagination
+  },
+  directives: {
+    loading: Loading.directive
   },
   mixins: [emitter],
   props: {
@@ -191,17 +194,17 @@ export default {
       return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
     },
     createLoadingFn() {
-      const { loadingText, loadingIcon, loadingBackground } = this.initConfig.loading;
-      const el = this.$el.querySelector('.cubeMaxHeight');
-      this.createLoading = Loading.service({
-        target: el,
-        fullscreen: false,
-        lock: true,
-        text: loadingText,
-        spinner: loadingIcon,
-        background: loadingBackground
-      });
-      this.loading = true;
+      // const { loadingText, loadingIcon, loadingBackground } = this.initConfig.loading;
+      // const el = this.$el.querySelector('.cubeMaxHeight');
+      // this.createLoading = Loading.service({
+      //   target: el,
+      //   fullscreen: false,
+      //   lock: true,
+      //   text: loadingText,
+      //   spinner: loadingIcon,
+      //   background: loadingBackground
+      // });
+      // this.loading = true;
     },
     afterLoadSelectFirstFn(list = []) {
       const { initSeletTheFirst } = this.initConfig.table;
@@ -217,7 +220,7 @@ export default {
       const { currentPage, size } = this.initConfig.pagination;
       const params = { pageIndex: currentPage, pageSize: size, ...searchParams, ...this.extraParam };
       if (this.loading) return;
-      this.createLoadingFn();
+      this.loading = true;
       if (loadType === 'page') this.initConfig.table.data = [];
       if (!page && loadType === 'list') {
         this.initConfig.table.data = [];
@@ -229,6 +232,7 @@ export default {
         return;
       }
       this.$request({ url, method: method, [paramsKey]: params }).then((res) => {
+        this.loading = false;
         const response = res.data;
         if (response[success]) {
           // 判断标识 数据结构是否是分页数据结构
@@ -277,15 +281,16 @@ export default {
             }
           }
         }
-        this.$nextTick(() => {
-          this.loading = false;
-          if (this.createLoading) this.createLoading.close();
-        });
+        // this.$nextTick(() => {
+        //   this.loading = false;
+        //   if (this.createLoading) this.createLoading.close();
+        // });
       }).catch(e => {
-        this.$nextTick(() => {
-          this.loading = false;
-          if (this.createLoading) this.createLoading.close();
-        });
+        this.loading = false;
+        // this.$nextTick(() => {
+        //   this.loading = false;
+        //   if (this.createLoading) this.createLoading.close();
+        // });
       });
     },
     handlerReset(searchParams) {

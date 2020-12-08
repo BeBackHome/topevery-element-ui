@@ -1,7 +1,7 @@
 <!--
  * @Author: shiliangL
  * @Date: 2020-06-17 14:20:40
- * @LastEditTime: 2020-11-04 10:42:59
+ * @LastEditTime: 2020-12-08 14:09:55
  * @LastEditors: Do not edit
  * @Description: 人工作业添加人员选择
  * @FilePath: /topevery-element-ui-v2/examples/play/views/About.vue
@@ -38,7 +38,7 @@ export default {
       },
       config: {
         method: 'POST',
-        url: 'http://hw-topevery-dev-ui:49310/personWorkGrid/getSchedulingPersonPage',
+        url: 'http://114.215.84.175:49210/personWorkGrid/getSchedulingPersonPage',
         search: {
           data: [
             [
@@ -46,7 +46,7 @@ export default {
                 type: 'input',
                 key: 'name',
                 class: 'w180',
-                placeholder: '人员名称、电话'
+                placeholder: '人工作业添加人员选择'
               },
               { type: 'search', name: '查询' },
               { type: 'reset', name: '重置' }

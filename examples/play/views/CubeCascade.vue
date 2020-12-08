@@ -1,7 +1,7 @@
 <!--
  * @Author: shiliangL
  * @Date: 2020-06-05 09:48:22
- * @LastEditTime: 2020-11-25 19:40:01
+ * @LastEditTime: 2020-12-08 14:04:31
  * @LastEditors: Do not edit
  * @Description: 
  * @FilePath: /topevery-element-ui-v2/examples/play/views/CubeCascade.vue
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-const baseURL = 'http://114.215.84.175:49210';
+const baseURL = 'http://192.168.5.14:49227/';
 export default {
   data() {
     return {
