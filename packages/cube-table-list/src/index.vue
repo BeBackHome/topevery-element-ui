@@ -78,7 +78,7 @@ import CubeSearchBar from 'topevery-element-ui/packages/cube-search-bar';
 import CubeTable from 'topevery-element-ui/packages/cube-table';
 import CubeMaxHeight from 'topevery-element-ui/packages/cube-max-height';
 import ElPagination from 'topevery-element-ui/packages/pagination';
-import Loading from 'topevery-element-ui/packages/loading';
+// import Loading from 'topevery-element-ui/packages/loading';
 // import { isObject } from '../../utils/types'
 
 export default {
@@ -90,9 +90,9 @@ export default {
     CubeMaxHeight,
     ElPagination
   },
-  directives: {
-    loading: Loading.directive
-  },
+  // directives: {
+  //   loading: Loading.directive
+  // },
   mixins: [emitter],
   props: {
     extraParam: {

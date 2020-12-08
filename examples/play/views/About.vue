@@ -1,7 +1,7 @@
 <!--
  * @Author: shiliangL
  * @Date: 2020-06-17 14:20:40
- * @LastEditTime: 2020-12-08 14:09:55
+ * @LastEditTime: 2020-12-08 16:56:30
  * @LastEditors: Do not edit
  * @Description: 人工作业添加人员选择
  * @FilePath: /topevery-element-ui-v2/examples/play/views/About.vue
@@ -46,7 +46,7 @@ export default {
                 type: 'input',
                 key: 'name',
                 class: 'w180',
-                placeholder: '人工作业添加人员选择'
+                placeholder: '人工作业添加人员选择x'
               },
               { type: 'search', name: '查询' },
               { type: 'reset', name: '重置' }
