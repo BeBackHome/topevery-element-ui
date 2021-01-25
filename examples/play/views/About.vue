@@ -43,7 +43,13 @@ export default {
           data: [
             [
               {
-                type: 'input',
+                type: 'cubeCascader',
+                key: 'name',
+                class: 'w180',
+                placeholder: '人工作业添加人员选择x'
+              },
+              {
+                type: 'month',
                 key: 'name',
                 class: 'w180',
                 placeholder: '人工作业添加人员选择x'

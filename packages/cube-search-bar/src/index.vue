@@ -99,6 +99,19 @@
             />
           </template>
 
+          <!-- 日期选择 -->
+          <template v-if="item.type === 'month'">
+            <el-date-picker
+              :class="item.class?item.class:'w140'"
+              :picker-options="item.pickerOptions"
+              v-model="item.value"
+              :size="size"
+              type="month"
+              :value-format="item.format || 'yyyy-MM'"
+              :placeholder="item.placeholder|| '请选择'"
+            />
+          </template>
+
           <!-- daterange 日期范围-->
           <template v-if="item.type === 'daterange'">
             <el-date-picker
