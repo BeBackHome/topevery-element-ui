@@ -43,7 +43,7 @@ export default {
           data: [
             [
               {
-                type: 'cubeCascader',
+                type: 'cubeSelectTree',
                 key: 'name',
                 class: 'w180',
                 placeholder: '人工作业添加人员选择x'

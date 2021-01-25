@@ -6,6 +6,7 @@
     :style="{width: defaultConfig.inputWidth ? defaultConfig.inputWidth : 'auto' }"
   >
     <el-input
+      ref="input"
       v-model.trim="selectValue"
       filterable
       :disabled="disabled"
@@ -191,6 +192,12 @@ export default {
   beforeDestroy() {
     this.recordSelect = null;
   },
+  created() {
+    const { focusOnload } = this.defaultConfig;
+    if (!focusOnload) {
+      this.fetchTableData();
+    }
+  },
   methods: {
     setScroll2Target() {
       setTimeout(_ => {
@@ -232,14 +239,7 @@ export default {
       // 获取焦点就加载如果关闭则只会加载请求一次
       if (focusOnload) {
         this.fetchTableData();
-      } else {
-        if (!this.defaultConfig.options.length) {
-          this.fetchTableData();
-        }
       }
-      // if (this.validateEvent) {
-      //   this.dispatch('ElFormItem', 'el.form.blur', [this.value])
-      // }
       this.$emit('focus');
     },
     blur() {
@@ -262,6 +262,7 @@ export default {
         this.selectValue = recordSelect[keyName];
         this.placeholder2 = this.defaultConfig.placeholder;
       }
+      this.$refs['input'] && this.$refs['input'].blur && this.$refs['input'].blur();
     },
     hidePopover() {
       this.$emit('hidePopover');

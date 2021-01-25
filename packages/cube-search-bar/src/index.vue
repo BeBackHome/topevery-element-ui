@@ -245,7 +245,7 @@
 <script>
 
 //  常量类型
-const commonlyTypes = ['input', 'select', 'option', 'cascader', 'cubeCascader', 'date', 'datetime', 'date-month', 'cubeMoreType'];
+const commonlyTypes = ['input', 'select', 'option', 'cascader', 'cubeCascader', 'date', 'month', 'datetime', 'date-month', 'cubeMoreType'];
 
 const timeRangeTime = ['daterange', 'datetimerange', 'monthrange'];
 //  特殊类型

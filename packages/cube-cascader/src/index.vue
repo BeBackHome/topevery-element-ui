@@ -116,7 +116,7 @@ export default {
   mounted() {
     const { isStaticOptions } = this.defaultConfig;
     if (!isStaticOptions) {
-      // this.fetchTableData();
+      this.fetchTableData();
     }
   },
   beforeDestroy() {
