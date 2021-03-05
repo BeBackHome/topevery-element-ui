@@ -131,6 +131,7 @@ export default {
         inputWidth: '220px', // 输入框宽度
         size: 'small',
         isStaticOptions: false, // options 选项是否作为 静态使用
+        initSeletTheFirstAfterLoad: false, // 是否加载完成默认选择第一个
         options: [],
         // 树区域
         selectAny: false,
@@ -302,6 +303,18 @@ export default {
     input(name) {
       this.inputChange(name);
     },
+    noChildren(childrenList = [], name = 'children') {
+      const findNoChildren = function(childrenList) {
+        if (!childrenList.length) return;
+        const element = childrenList[0];
+        if (element[name] && Array.isArray(element[name]) && element[name].length) {
+          return findNoChildren(element[name]);
+        } else {
+          return element;
+        }
+      };
+      return findNoChildren(childrenList);
+    },
     fetchTableData() {
       const { extraParam } = this;
       const { url, method, focusOnload, isStaticOptions } = this.defaultConfig;
@@ -324,6 +337,15 @@ export default {
           if (Array.isArray(result)) {
             this.options = result || [];
             if (focusOnload) {
+              if (Array.isArray(result) && result.length) {
+                const { initSeletTheFirstAfterLoad, selectAny } = this.defaultConfig;
+                // 是否默认选择第一个
+                if (initSeletTheFirstAfterLoad && selectAny && !this.initSeletTheFirstAfterLoadTag) {
+                  this.initSeletTheFirstAfterLoadTag = true;
+                  const item = result[0];
+                  if (item) this.handleNodeClick(item);
+                }
+              }
               // 显示到选取区域
               setTimeout(_ => {
                 this.setScroll2Target();

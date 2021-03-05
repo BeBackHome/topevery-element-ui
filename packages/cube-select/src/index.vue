@@ -48,6 +48,7 @@
             label="序号"
             type="index"
             :index="indexMethod"
+            v-if="defaultConfig.showIndex"
           />
           <el-table-column
             v-for="(item,index) in defaultConfig.column"
@@ -189,6 +190,7 @@ export default {
         tableHeight: 250,
         headerAlign: 'center',
         showHeader: true, // 是否显示表头
+        showIndex: true, // 是否显序号
         column: [
           { key: 'name', label: '名称' },
           { key: 'code', label: '编码' }
@@ -219,7 +221,7 @@ export default {
         const { isStaticOptions, options } = this.defaultConfig;
         if (isStaticOptions && isArray(options)) {
           this.filterTableData = options;
-          this.staticTableData = JSON.parse(JSON.stringify(options)) ; // 模拟前端检索使用
+          this.staticTableData = JSON.parse(JSON.stringify(options)); // 模拟前端检索使用
         }
       }
     },
@@ -228,7 +230,7 @@ export default {
         const { isStaticOptions } = this.defaultConfig;
         if (isStaticOptions && isArray(options)) {
           this.filterTableData = options;
-          this.staticTableData = JSON.parse(JSON.stringify(options)) ; // 模拟前端检索使用
+          this.staticTableData = JSON.parse(JSON.stringify(options)); // 模拟前端检索使用
         }
       }
     },
