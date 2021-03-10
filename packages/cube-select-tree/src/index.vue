@@ -317,7 +317,8 @@ export default {
     },
     fetchTableData() {
       const { extraParam } = this;
-      const { url, method, focusOnload, isStaticOptions } = this.defaultConfig;
+      // const { url, method, focusOnload, isStaticOptions } = this.defaultConfig;
+      const { url, method, isStaticOptions } = this.defaultConfig;
       if (isStaticOptions) return;
       if (!url) false;
       this.loading = true;
@@ -333,24 +334,22 @@ export default {
         this.loading = false;
         const response = res.data;
         if (response.success) {
-          const result = response.data;
+          const result = response.data || [];
+          this.options = result || [];
           if (Array.isArray(result)) {
-            this.options = result || [];
-            if (focusOnload) {
-              if (Array.isArray(result) && result.length) {
-                const { initSeletTheFirstAfterLoad, selectAny } = this.defaultConfig;
-                // 是否默认选择第一个
-                if (initSeletTheFirstAfterLoad && selectAny && !this.initSeletTheFirstAfterLoadTag) {
-                  this.initSeletTheFirstAfterLoadTag = true;
-                  const item = result[0];
-                  if (item) this.handleNodeClick(item);
-                }
+            if (Array.isArray(result) && result.length) {
+              const { initSeletTheFirstAfterLoad, selectAny } = this.defaultConfig;
+              // 是否默认选择第一个
+              if (initSeletTheFirstAfterLoad && selectAny && !this.initSeletTheFirstAfterLoadTag) {
+                this.initSeletTheFirstAfterLoadTag = true;
+                const item = result[0];
+                if (item) this.handleNodeClick(item);
               }
-              // 显示到选取区域
-              setTimeout(_ => {
-                this.setScroll2Target();
-              }, 20);
             }
+            // 显示到选取区域
+            setTimeout(_ => {
+              this.setScroll2Target();
+            }, 20);
           }
         }
       }).catch(e => {

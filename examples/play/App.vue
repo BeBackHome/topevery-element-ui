@@ -1,7 +1,7 @@
 <!--
  * @Author: shiliangL
  * @Date: 2020-05-22 11:02:08
- * @LastEditTime: 2020-12-08 14:53:08
+ * @LastEditTime: 2021-03-08 10:06:08
  * @LastEditors: Do not edit
  * @Description: 
  * @FilePath: /topevery-element-ui-v2/examples/play/App.vue
@@ -12,6 +12,7 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link> | 
       <router-link to="/cubeViewer">CubeViewer</router-link> |
+      <router-link to="/cascade"> cascade </router-link> |
       <!-- <router-link to="/cascade">cascade</router-link> |
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link> |

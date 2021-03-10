@@ -1,42 +1,30 @@
-<!--
- * @Author: shiliangL
- * @Date: 2021-03-10 17:10:45
- * @LastEditTime: 2021-03-10 18:17:50
- * @LastEditors: Do not edit
- * @Description:
--->
-
 <!-- 选择组件 提供分页检索选择应数据量大列表卡顿以及分页接口数据选择 -->
 <template>
   <span
     v-clickoutside="miss"
     class="cube-select"
   >
+    <el-input
+      v-model.trim="selectValue"
+      :style="{width: defaultConfig.inputWidth? defaultConfig.inputWidth : '' }"
+      :placeholder="placeholder2"
+      :size="defaultConfig.size"
+      :disabled="disabled"
+      :filterable="defaultConfig.filterable"
+      :clearable="defaultConfig.clearable"
+      @focus="focus"
+      @blur="blur"
+      @clear="clear"
+      @input="input"
+    />
+
     <el-popover
       v-model="visible"
-      popper-class="cube-select2x"
       class="popover"
+      placement="bottom"
       :width="defaultConfig.popoverWidth"
-      trigger="manual"
-      placement="bottom-start"
-      :visible-arrow="false"
       @hide="hidePopover"
     >
-      <el-input
-        slot="reference"
-        v-model.trim="selectValue"
-        :style="{width: defaultConfig.inputWidth? defaultConfig.inputWidth : '' }"
-        :placeholder="placeholder2"
-        :size="defaultConfig.size"
-        :disabled="disabled"
-        :filterable="defaultConfig.filterable"
-        :clearable="defaultConfig.clearable"
-        @focus="focus"
-        @blur="blur"
-        @clear="clear"
-        @input="input"
-      />
-
       <div
         v-loading="loading"
         element-loading-text="拼命加载中"
@@ -53,14 +41,14 @@
           highlight-current-row
           :row-style="rowStyle"
           element-loading-text="数据加载中..."
-          :show-header="defaultConfig.showHeader"
           @row-click="rowClick"
+          :show-header="defaultConfig.showHeader"
         >
           <el-table-column
-            v-if="defaultConfig.showIndex"
             label="序号"
             type="index"
             :index="indexMethod"
+            v-if="defaultConfig.showIndex"
           />
           <el-table-column
             v-for="(item,index) in defaultConfig.column"
@@ -151,7 +139,8 @@ export default {
     ElPagination
   },
   directives: {
-    Clickoutside
+    Clickoutside,
+    loading: Loading.directive
   },
   mixins: [emitter],
   props: {
@@ -279,9 +268,9 @@ export default {
   },
   methods: {
     focus() {
-      this.visible = true;
       const { recordSelect } = this;
       const { focusOnload, keyName } = this.defaultConfig;
+      this.visible = true;
       // 获取焦点的时候 如果已经选择的东西 隐藏
       if (recordSelect) {
         this.selectValue = '';
@@ -295,9 +284,11 @@ export default {
           this.fetchTableData();
         }
       }
+
       // if (this.validateEvent) {
       //   this.dispatch('ElFormItem', 'el.form.blur', [this.value])
       // }
+
       this.$emit('focus');
       this.$emit('visibleChange', true);
 
@@ -305,6 +296,7 @@ export default {
       if (isStaticOptions) {
         this.doFilterTable('');
       }
+
       setTimeout(_ => {
         this.setTableCurrentRow();
       }, 0);
@@ -322,8 +314,8 @@ export default {
       this.$emit('clear');
     },
     miss() {
-      this.visible = false;
       this.selectValue = '';
+      this.visible = false;
       const { recordSelect } = this;
       const { keyName } = this.defaultConfig;
       if (recordSelect) {
@@ -408,7 +400,6 @@ export default {
       const params = isNoPage ? { ...searchParams2extraParams } : { ...pageParams, ...searchParams2extraParams };
       const paramsKey = method.toUpperCase() !== 'POST' ? 'params' : 'data';
       if (!this.$request) {
-        // eslint-disable-next-line no-console
         console.error('请在vue原型链中注入$request请求方法');
         return;
       }
@@ -438,9 +429,4 @@ export default {
   }
 };
 </script>
-
-<style lang="scss" scoped>
-.cube-select2x{
-  padding: 0!important;
-}
-</style>
+ 

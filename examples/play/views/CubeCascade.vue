@@ -1,19 +1,27 @@
 <!--
  * @Author: shiliangL
  * @Date: 2020-06-05 09:48:22
- * @LastEditTime: 2020-12-08 14:04:31
+ * @LastEditTime: 2021-03-08 10:10:03
  * @LastEditors: Do not edit
  * @Description: 
  * @FilePath: /topevery-element-ui-v2/examples/play/views/CubeCascade.vue
 --> 
 <template>
   <div>
+    cube-select-tree
     <!-- <cube-select-cascade v-model="selectCascade" @config="config" /> -->
     <cube-Table-List
+      v-if="0"
       ref="CubeTableList"
       class="page"
       :extra-param="extraParam"
       :config="config3"
+    />
+
+    <cube-select-tree
+      v-model="cubeSelect"
+      :config="configPlus"
+      @change="selectTreeChange"
     />
   </div>
 </template>
@@ -23,6 +31,23 @@ const baseURL = 'http://192.168.5.14:49227/';
 export default {
   data() {
     return {
+      cubeSelect: null,
+      configPlus: {
+        size: 'mini',
+        clearable: false,
+        focusOnload: false,
+        selectAny: true,
+        initSeletTheFirstAfterLoad: true,
+        placeholder: '选择标段',
+        keyCode: 'value',
+        keyName: 'label',
+        inputWidth: '334px',
+        popoverWidth: '334px',
+        children: 'children',
+        method: 'POST',
+        otherProps: ['dataType'],
+        url: 'http://192.168.5.6:49210/getSectionTree'
+      },
       extraParam: {
         'chooseList': [
           'A4D34B07-B145-445E-95E6-BA3EFCBEEEDB',
@@ -270,6 +295,11 @@ export default {
         { label: '子级联', value: '132123123' }
       ];
     }, 2000);
+  },
+  methods: {
+    selectTreeChange(item) {
+      console.log(item, '-xx-');
+    }
   }
 };
 </script>
