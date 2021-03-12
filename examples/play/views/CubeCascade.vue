@@ -1,14 +1,14 @@
 <!--
  * @Author: shiliangL
  * @Date: 2020-06-05 09:48:22
- * @LastEditTime: 2021-03-08 10:10:03
+ * @LastEditTime: 2021-03-12 09:13:42
  * @LastEditors: Do not edit
  * @Description: 
  * @FilePath: /topevery-element-ui-v2/examples/play/views/CubeCascade.vue
 --> 
 <template>
   <div>
-    cube-select-tree
+    cube-select-tree 2
     <!-- <cube-select-cascade v-model="selectCascade" @config="config" /> -->
     <cube-Table-List
       v-if="0"
@@ -19,9 +19,15 @@
     />
 
     <cube-select-tree
+      v-if="0"
       v-model="cubeSelect"
       :config="configPlus"
       @change="selectTreeChange"
+    />
+
+    <cube-select
+      v-model="select2x"
+      :config="carConfig"
     />
   </div>
 </template>
@@ -31,6 +37,21 @@ const baseURL = 'http://192.168.5.14:49227/';
 export default {
   data() {
     return {
+      select2x: null,
+      carConfig: {
+        showHeader: false, // 是否显示表头
+        keyName: 'no',
+        keyCode: 'carId',
+        method: 'POST',
+        inputWidth: '100%',
+        // isNoPage: true,
+        // tableHeight: '200px',
+        url: 'http://192.168.5.11:49052/car/getSelectList',
+        placeholder: '请选择',
+        column: [
+          { key: 'no', label: '名称', align: 'left' }
+        ]
+      },
       cubeSelect: null,
       configPlus: {
         size: 'mini',

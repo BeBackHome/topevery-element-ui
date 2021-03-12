@@ -1,1249 +1,329 @@
+<!--
+ * @Author: shiliangL
+ * @Date: 2020-06-05 09:48:22
+ * @LastEditTime: 2021-03-12 09:14:20
+ * @LastEditors: Do not edit
+ * @Description: 
+ * @FilePath: /topevery-element-ui-v2/examples/play/views/CubeCascade.vue
+--> 
 <template>
-  <div class="echarts-container">
-    <el-row :gutter="15" v-if="0">
-      <el-col
-        :xs="24"
-        :sm="24"
-        :md="12"
-        :lg="12"
-        :xl="8"
-      >
-        <el-card shadow="hover">
-          <div slot="header">柱状图</div>
-          <div>
-            <cube-chart
-              autoresize
-              :options="chart1"
-            />
-          </div>
-        </el-card>
-      </el-col>
-      <el-col
-        :xs="24"
-        :sm="24"
-        :md="12"
-        :lg="12"
-        :xl="8"
-      >
-        <el-card shadow="hover">
-          <div slot="header">
-            柱状图-竖形(适合横坐标文字过长的情况)
-          </div>
-          <div>
-            <cube-chart
-              ref="myLine"
-              theme="byui-echarts-theme"
-              autoresize
-              :options="chart3"
-              class="my-line"
-            />
-          </div>
-        </el-card>
-      </el-col>
-      <el-col
-        :xs="24"
-        :sm="24"
-        :md="12"
-        :lg="12"
-        :xl="8"
-      >
-        <el-card shadow="hover">
-          <div slot="header">折线图</div>
-          <div>
-            <cube-chart
-              ref="myLine1"
-              theme="byui-echarts-theme"
-              autoresize
-              :options="chart5"
-              class="my-line1"
-            />
-          </div>
-        </el-card>
-      </el-col>
-      <el-col
-        :xs="24"
-        :sm="24"
-        :md="12"
-        :lg="12"
-        :xl="8"
-      >
-        <el-card shadow="hover">
-          <div slot="header">饼图</div>
-          <div>
-            <cube-chart
-              ref="myPie"
-              :options="chart2"
-              class="my-pie"
-            />
-            <el-row
-              :gutter="15"
-              style="margin: 0; background: #0f375f;"
-            >
-              <el-col
-                v-for="(item, index) in pieData"
-                :key="item.id"
-                :span="12"
-              >
-                <div
-                  class="grid-content bg-purple pie-legend"
-                  @mouseenter="connectPie(index)"
-                  @mouseleave="loseConnect(index)"
-                >
-                  <i :style="{ background: item.itemStyle.color}"></i>
-                  <span>{{ item.name }}</span>
-                  <span style="float: right;">{{ item.value }}</span>
-                </div>
-              </el-col>
-            </el-row>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
+  <div>
+    cube-select-tree 2
+    <!-- <cube-select-cascade v-model="selectCascade" @config="config" /> -->
+    <cube-Table-List
+      v-if="0"
+      ref="CubeTableList"
+      class="page"
+      :extra-param="extraParam"
+      :config="config3"
+    />
 
-    <CubeMoreType></CubeMoreType>
+    <cube-select-tree
+      v-if="0"
+      v-model="cubeSelect"
+      :config="configPlus"
+      @change="selectTreeChange"
+    />
+
+    <cube-select
+      v-model="select2x"
+      :config="carConfig"
+    />
   </div>
 </template>
 
 <script>
-
-import echarts from 'echarts/lib/echarts';
-
-const myColor = [
-  '#eb2100',
-  '#eb3600',
-  '#d0570e',
-  '#d0a00e',
-  '#34da62',
-  '#00e9db',
-  '#00c0e9',
-  '#0096f3',
-  '#33CCFF',
-  '#33FFCC'
-];
-
+const baseURL = 'http://192.168.5.14:49227/';
 export default {
-  name: 'Echarts',
   data() {
     return {
-      chart1: {
-        title: {
-          text: '2019年销售水量和主营业务收入对比',
-          textStyle: {
-            align: 'center',
-            color: '#fff',
-            fontSize: 20
-          },
-          top: '3%',
-          left: '10%'
-        },
-        backgroundColor: '#0f375f',
-        grid: {
-          top: '25%',
-          bottom: '10%'
-        },
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'shadow',
-            label: {
-              show: true
-            }
-          }
-        },
-        legend: {
-          data: ['销售水量', '主营业务'],
-          top: '15%',
-          textStyle: {
-            color: '#ffffff'
-          }
-        },
-        xAxis: {
+      select2x: null,
+      carConfig: {
+        showHeader: false, // 是否显示表头
+        keyName: 'no',
+        keyCode: 'carId',
+        method: 'POST',
+        inputWidth: '100%',
+        // isNoPage: true,
+        // tableHeight: '200px',
+        url: 'http://192.168.5.11:49052/car/getSelectList',
+        placeholder: '请选择',
+        column: [
+          { key: 'no', label: '名称', align: 'left' }
+        ]
+      },
+      cubeSelect: null,
+      configPlus: {
+        size: 'mini',
+        clearable: false,
+        focusOnload: false,
+        selectAny: true,
+        initSeletTheFirstAfterLoad: true,
+        placeholder: '选择标段',
+        keyCode: 'value',
+        keyName: 'label',
+        inputWidth: '334px',
+        popoverWidth: '334px',
+        children: 'children',
+        method: 'POST',
+        otherProps: ['dataType'],
+        url: 'http://192.168.5.6:49210/getSectionTree'
+      },
+      extraParam: {
+        'chooseList': [
+          'A4D34B07-B145-445E-95E6-BA3EFCBEEEDB',
+          '3C08DCA5-8451-495F-A68F-798CB85CE775',
+          'CB2384A8-D13D-4269-88C4-ABB3A8EECDB3',
+          '04A7EFD2-5E81-4FCB-AF39-071B71B076DC',
+          'E96656D7-7202-4CDB-8AA9-08EB85D9E625',
+          '2bfc7567-2623-4567-89ab-e5c2a2a4ad22',
+          '9C97F522-E8E8-4A80-A59A-7332315AE11E',
+          'D2BE7152-DB6C-4C9A-A965-99A98B363AEF',
+          '85B1F05E-BC8E-4D0B-AEB9-2BCD42A8A208',
+          'A620C9AD-2FA4-4019-8F6C-3C9EAB9E5174',
+          'FFE49BEB-221F-481C-B368-29CCE68E87C9',
+          '88070170-F6FC-4E48-A45C-5E061DB380FB',
+          '90891813-449E-448D-A373-95C31D5B2878',
+          '2198434C-88EF-4B80-A2BA-A4762AB6F5A8',
+          '060B992A-A92B-4F54-B2A8-278FA7DC5E25',
+          '7BC1E08B-3D59-459B-B072-ABB3B8EBFBA7'
+        ],
+        'personTypeList': [
+          'EE9A7851-EF73-4A80-8AC1-E86635A270C9',
+          'C24D3966-A1BC-4F17-9C05-AF47F452C437',
+          '7A833A27-29A8-49A3-9CCE-C594AFB8CD9A',
+          '55A5A17F-9B8D-489C-BEDB-6094EFEF498A'
+        ],
+        'workState': 0,
+        'sectionAreaId': '80E7A774-149D-423A-BF6A-7A72279CB69D'
+      },
+      config3: {
+        method: 'POST',
+        url: 'http://114.215.84.175:49210' + '/personWorkGrid/getSchedulingPersonPage',
+        search: {
           data: [
-            '当年完成水量',
-            '去年同期水量',
-            '滚动目标值水量',
-            '全年目标值水量',
-            '当年完成金额',
-            '去年同期金额',
-            '滚动目标金额',
-            '全年目标值'
-          ],
-          axisLine: {
-            show: true // 隐藏X轴轴线
-          },
-          axisTick: {
-            show: true // 隐藏X轴刻度
-          },
-          axisLabel: {
-            show: true,
-            textStyle: {
-              color: '#ebf8ac' // X轴文字颜色
-            }
-          }
-        },
-        yAxis: [
-          {
-            type: 'value',
-            name: '亿元',
-            nameTextStyle: {
-              color: '#ebf8ac'
-            },
-            splitLine: {
-              show: false
-            },
-            axisTick: {
-              show: true
-            },
-            axisLine: {
-              show: true
-            },
-            axisLabel: {
-              show: true,
-              textStyle: {
-                color: '#ebf8ac'
-              }
-            }
-          },
-          {
-            type: 'value',
-            name: '同比',
-            nameTextStyle: {
-              color: '#ebf8ac'
-            },
-            position: 'right',
-            splitLine: {
-              show: false
-            },
-            axisTick: {
-              show: false
-            },
-            axisLine: {
-              show: false
-            },
-            axisLabel: {
-              show: true,
-              formatter: '{value} %', // 右侧Y轴文字显示
-              textStyle: {
-                color: '#ebf8ac'
-              }
-            }
-          },
-          {
-            type: 'value',
-            gridIndex: 0,
-            min: 50,
-            max: 100,
-            splitNumber: 8,
-            splitLine: {
-              show: false
-            },
-            axisLine: {
-              show: false
-            },
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              show: false
-            },
-            splitArea: {
-              show: true,
-              areaStyle: {
-                color: ['rgba(250,250,250,0.0)', 'rgba(250,250,250,0.05)']
-              }
-            }
-          }
-        ],
-        series: [
-          {
-            name: '销售水量',
-            type: 'line',
-            yAxisIndex: 1, // 使用的 y 轴的 index，在单个图表实例中存在多个 y轴的时候有用
-            smooth: true, // 平滑曲线显示
-            showAllSymbol: true, // 显示所有图形。
-            symbol: 'circle', // 标记的图形为实心圆
-            symbolSize: 10, // 标记的大小
-            itemStyle: {
-              // 折线拐点标志的样式
-              color: '#058cff'
-            },
-            lineStyle: {
-              color: '#058cff'
-            },
-            areaStyle: {
-              color: 'rgba(5,140,255, 0.2)'
-            },
-            data: [4.2, 3.8, 4.8, 3.5, 2.9, 2.8, 3, 5]
-          },
-          {
-            name: '主营业务',
-            type: 'bar',
-            barWidth: 15,
-            itemStyle: {
-              normal: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                  {
-                    offset: 0,
-                    color: '#00FFE3'
-                  },
-                  {
-                    offset: 1,
-                    color: '#4693EC'
-                  }
-                ])
-              }
-            },
-            data: [4.2, 3.8, 4.8, 3.5, 2.9, 2.8, 3, 5]
-          }
-        ]
-      },
-      pieData: [
-        {
-          value: 154,
-          name: '刑事',
-          itemStyle: {
-            color: '#ea9300'
-          }
-        },
-        {
-          value: 321,
-          name: '治安',
-          itemStyle: {
-            color: '#0c77df'
-          }
-        },
-        {
-          value: 231,
-          name: '122警情',
-          itemStyle: {
-            color: '#749f83'
-          }
-        },
-        {
-          value: 562,
-          name: '交通事故',
-          itemStyle: {
-            color: '#c23531'
-          }
-        },
-        {
-          value: 442,
-          name: '纠纷',
-          itemStyle: {
-            color: '#61a0a8'
-          }
-        },
-        {
-          value: 123,
-          name: '群众求助',
-          itemStyle: {
-            color: '#00ffff'
-          }
-        },
-        {
-          value: 386,
-          name: '举报违法',
-          itemStyle: {
-            color: '#f5f488'
-          }
-        },
-        {
-          value: 90,
-          name: '自定义',
-          itemStyle: {
-            color: '#c21fff'
-          }
-        }
-      ],
-      chart2: {
-        backgroundColor: '#0f375f',
-        grid: {
-          top: 0,
-          right: '5%'
-        },
-        tooltip: {
-          trigger: 'item',
-          backgroundColor: '#011a44',
-          borderColor: '#169ef6',
-          borderWidth: 1,
-          textStyle: {
-            color: '#b2e1ff',
-            fontSize: '14px'
-          },
-          padding: 10,
-          formatter: '{b} <br>共计： {c} 起<br>占比：{d}%'
-        },
-        series: [
-          {
-            type: 'pie',
-            radius: ['60%', '80%'],
-            center: ['50%', '50%'],
-            selectedMode: 'single',
-            label: {
-              normal: {
-                show: false,
-                position: 'center'
-              }
-            },
-            animationType: 'scale',
-            animationEasing: 'elastiocOut',
-            animationDelay: function(idx) {
-              return Math.random() * 200;
-            },
-            data: [
+            [
               {
-                value: 154,
-                name: '刑事',
-                itemStyle: {
-                  color: '#ea9300'
-                }
+                type: 'input',
+                key: 'name',
+                class: 'w180',
+                placeholder: '人员名称、电话'
               },
-              {
-                value: 321,
-                name: '治安',
-                itemStyle: {
-                  color: '#0c77df'
-                }
-              },
-              {
-                value: 231,
-                name: '122警情',
-                itemStyle: {
-                  color: '#749f83'
-                }
-              },
-              {
-                value: 562,
-                name: '交通事故',
-                itemStyle: {
-                  color: '#c23531'
-                }
-              },
-              {
-                value: 442,
-                name: '纠纷',
-                itemStyle: {
-                  color: '#61a0a8'
-                }
-              },
-              {
-                value: 123,
-                name: '群众求助',
-                itemStyle: {
-                  color: '#00ffff'
-                }
-              },
-              {
-                value: 386,
-                name: '举报违法',
-                itemStyle: {
-                  color: '#f5f488'
-                }
-              },
-              {
-                value: 90,
-                name: '自定义',
-                itemStyle: {
-                  color: '#c21fff'
-                }
-              }
-            ]
-          }
-        ],
-        textStyle: {
-          color: '#98d7ff'
-        }
-      },
-      chart3: {
-        backgroundColor: '#0f375f',
-        grid: {
-          left: '11%',
-          top: '12%',
-          right: '5%',
-          bottom: '8%',
-          containLabel: true
-        },
-        xAxis: [
-          {
-            show: false
-          }
-        ],
-        yAxis: [
-          {
-            axisTick: 'none',
-            axisLine: 'none',
-            offset: '27',
-            axisLabel: {
-              textStyle: {
-                color: '#ffffff',
-                fontSize: '14'
-              }
-            },
-            data: [
-              '南昌转运中心',
-              '广州转运中心',
-              '杭州转运中心',
-              '宁夏转运中心',
-              '兰州转运中心',
-              '南宁转运中心',
-              '长沙转运中心',
-              '武汉转运中心',
-              '合肥转运中心',
-              '贵州转运中心'
-            ]
-          },
-          {
-            axisTick: 'none',
-            axisLine: 'none',
-            axisLabel: {
-              textStyle: {
-                color: '#ffffff',
-                fontSize: '14'
-              }
-            },
-            data: ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1']
-          },
-          {
-            name: '分拨延误TOP 10',
-            nameGap: '50',
-            nameTextStyle: {
-              color: '#ffffff',
-              fontSize: '14'
-            },
-            axisLine: {
-              lineStyle: {
-                color: 'rgba(0,0,0,0)'
-              }
-            },
-            data: []
-          }
-        ],
-        series: [
-          {
-            name: '条',
-            type: 'bar',
-            yAxisIndex: 0,
-            data: [4, 13, 25, 29, 38, 44, 50, 52, 60, 72],
-            label: {
-              normal: {
-                show: true,
-                position: 'right',
-                textStyle: {
-                  color: '#ffffff',
-                  fontSize: '14'
-                }
-              }
-            },
-            barWidth: 18,
-            itemStyle: {
-              normal: {
-                color: function(params) {
-                  const num = myColor.length;
-                  return myColor[params.dataIndex % num];
-                },
-                barBorderRadius: 5
-              }
-            },
-            z: 2
-          },
-          {
-            name: '白框',
-            type: 'bar',
-            yAxisIndex: 1,
-            barGap: '-100%',
-            data: [99, 99.5, 99.5, 99.5, 99.5, 99.5, 99.5, 99.5, 99.5, 99.5],
-            barWidth: 20,
-            itemStyle: {
-              normal: {
-                color: '#0e2147',
-                barBorderRadius: 5
-              }
-            },
-            z: 1
-          }
-        ]
-      },
-      chart4: {
-        backgroundColor: '#0f375f',
-        color: ['#4DFFE3', '#4DE0FF', '#4DFF8F', '#ADFF4D'],
-        tooltip: {
-          show: true,
-          formatter: '{b} : {c}'
-        },
-
-        legend: {
-          show: true,
-          icon: 'circle',
-          top: '10%',
-          left: '10%',
-          width: 50,
-          padding: [0, 5],
-          itemGap: 25,
-          data: ['已婚已育', '已婚未育', '未婚', '学生'],
-          textStyle: {
-            color: '#fff',
-            align: 'right',
-            x: 'right',
-            textAlign: 'right'
-          },
-
-          selectedMode: true,
-          orient: 'vertical'
-        },
-        series: [
-          {
-            name: 'Line 4',
-            type: 'pie',
-            clockWise: true,
-            hoverAnimation: false,
-            radius: ['65%', '75%'],
-            itemStyle: {
-              normal: {
-                label: {
-                  show: false
-                },
-                labelLine: {
-                  show: false
-                }
-                // shadowBlur: 15,
-                // shadowColor: 'white',
-              }
-            },
-
-            data: [
-              {
-                value: 7645434,
-                name: '已婚已育'
-              },
-              {
-                value: 3612343,
-                name: '总数',
-                tooltip: {
-                  show: false
-                },
-                itemStyle: {
-                  normal: {
-                    color: 'rgba(0,0,0,0)',
-                    label: {
-                      show: false
-                    },
-                    labelLine: {
-                      show: false
-                    }
-                  },
-                  emphasis: {
-                    color: 'rgba(0,0,0,0)'
-                  }
-                }
-              }
-            ]
-          },
-          {
-            name: 'Line 3',
-            type: 'pie',
-            clockWise: true,
-            radius: ['50%', '60%'],
-            itemStyle: {
-              normal: {
-                label: {
-                  show: false
-                },
-                labelLine: {
-                  show: false
-                }
-                // shadowBlur: 15,
-                // shadowColor: 'white',
-              }
-            },
-            hoverAnimation: false,
-
-            data: [
-              {
-                value: 2632321,
-                name: '已婚未育'
-              },
-              {
-                value: 2212343,
-                name: '总数',
-                tooltip: {
-                  show: false
-                },
-                itemStyle: {
-                  normal: {
-                    color: 'rgba(0,0,0,0)',
-                    label: {
-                      show: false
-                    },
-                    labelLine: {
-                      show: false
-                    }
-                  },
-                  emphasis: {
-                    color: 'rgba(0,0,0,0)'
-                  }
-                }
-              }
-            ]
-          },
-          {
-            name: 'Line 2',
-            type: 'pie',
-            clockWise: true,
-            hoverAnimation: false,
-            radius: ['35%', '45%'],
-            itemStyle: {
-              normal: {
-                label: {
-                  show: false
-                },
-                labelLine: {
-                  show: false
-                }
-                // shadowBlur: 15,
-                // shadowColor: 'white',
-              }
-            },
-
-            data: [
-              {
-                value: 1823323,
-                name: '未婚'
-              },
-              {
-                value: 1812343,
-                name: '总数',
-                tooltip: {
-                  show: false
-                },
-                itemStyle: {
-                  normal: {
-                    color: 'rgba(0,0,0,0)',
-                    label: {
-                      show: false
-                    },
-                    labelLine: {
-                      show: false
-                    }
-                  },
-                  emphasis: {
-                    color: 'rgba(0,0,0,0)'
-                  }
-                }
-              }
-            ]
-          },
-          {
-            name: 'Line 1',
-            type: 'pie',
-            clockWise: true,
-
-            radius: ['20%', '30%'],
-            itemStyle: {
-              normal: {
-                label: {
-                  show: false
-                },
-                labelLine: {
-                  show: false
-                }
-                // shadowBlur: 15,
-                // shadowColor: 'white',
-              }
-            },
-            hoverAnimation: false,
-
-            data: [
-              {
-                value: 1342221,
-                name: '学生'
-              },
-              {
-                value: 1912343,
-                name: '总数',
-                tooltip: {
-                  show: false
-                },
-                itemStyle: {
-                  normal: {
-                    color: 'rgba(0,0,0,0)',
-                    label: {
-                      show: false
-                    },
-                    labelLine: {
-                      show: false
-                    }
-                  },
-                  emphasis: {
-                    color: 'rgba(0,0,0,0)'
-                  }
-                }
-              }
-            ]
-          }
-        ]
-      },
-      chart5: {
-        backgroundColor: '#0f375f',
-        grid: {
-          top: 20,
-          left: 60
-        },
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'line',
-            lineStyle: {
-              color: '#169ef6'
-            },
-            label: {
-              backgroundColor: '#6a7985', // 水平线上提示框颜色
-              formatter: '{value}'
-            }
-          },
-          backgroundColor: '#011a44',
-          borderColor: '#169ef6',
-          borderWidth: 1,
-          textStyle: {
-            color: '#b2e1ff',
-            fontSize: '14px'
-          },
-          padding: 10
-        },
-        toolbox: {}, // 工具栏
-        xAxis: [
-          {
-            // X轴
-            type: 'category',
-            axisLine: {
-              lineStyle: {
-                color: '#169ef6'
-              }
-            },
-            splitLine: {
-              show: false,
-              lineStyle: {
-                show: true,
-                color: '#169ef6',
-                type: 'dashed'
-              }
-            },
-            data: ['4/1', '4/5', '4/10', '4/15', '4/20', '4/25', '4/30']
-          }
-        ],
-        yAxis: [
-          {
-            // Y轴
-            type: 'value',
-            axisLine: {
-              lineStyle: {
-                color: '#003280'
-              }
-            },
-            splitLine: {
-              show: true,
-              lineStyle: {
-                color: '#169ef6',
-                type: 'dashed'
-              }
-            }
-          }
-        ],
-        series: [
-          {
-            type: 'line',
-            smooth: true, // 圆滑效果
-            data: [50, 75, 60, 100, 75, 55, 75],
-            itemStyle: {
-              color: '#ff964b'
-            },
-            lineStyle: {
-              width: 4,
-              color: {
-                type: 'linear',
-
-                colorStops: [
-                  {
-                    offset: 0,
-                    color: '#003BC9' // 0% 处的颜色
-                  },
-                  {
-                    offset: 1,
-                    color: '#02C5C8' // 100% 处的颜色
-                  }
-                ],
-                globalCoord: false // 缺省为 false
-              }
-            },
-            areaStyle: {
-              color: {
-                type: 'linear',
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [
-                  {
-                    offset: 0,
-                    color: '#7fbbf1' // 0%处的颜色
-                  },
-                  {
-                    offset: 1,
-                    color: '#05204c' // 100%处的颜色
-                  }
-                ],
-                globalCoord: false
-              }
-            }
-          }
-        ],
-        textStyle: {
-          color: '#98d7ff'
-        }
-      },
-      chart6: {
-        series: [
-          {
-            type: 'graph',
-            layout: 'force',
-            symbolSize: 58,
-            draggable: true,
-            roam: true,
-            focusNodeAdjacency: true,
-            categories: [
-              {
-                name: '公司',
-                itemStyle: {
-                  color: '#006acc'
-                }
-              },
-              {
-                name: '董事',
-                itemStyle: {
-                  color: '#ff7d18'
-                }
-              }
+              { type: 'search', name: '查询' },
+              { type: 'reset', name: '重置' }
             ],
-            edgeSymbol: ['', 'arrow'],
-            edgeLabel: {
-              normal: {
-                show: true,
-                textStyle: {
-                  fontSize: 20
-                },
-                formatter(x) {
-                  return x.data.name;
-                }
-              }
-            },
-            label: {
-              show: true
-            },
-            force: {
-              repulsion: 2000,
-              edgeLength: 120
-            },
-            data: [
-              {
-                name: '操作系统集团'
-              },
-              {
-                name: '浏览器有限公司'
-              },
-              {
-                name: 'HTML科技'
-              },
-              {
-                name: 'JavaScript科技'
-              },
-              {
-                name: 'CSS科技'
-              },
-              {
-                name: 'Chrome'
-              },
-              {
-                name: 'IE'
-              },
-              {
-                name: 'Firefox'
-              },
-              {
-                name: 'Safari'
-              }
-            ],
-            links: [
-              {
-                source: '浏览器有限公司',
-                target: '操作系统集团',
-                name: '参股'
-              },
-              {
-                source: 'HTML科技',
-                target: '浏览器有限公司',
-                name: '参股'
-              },
-              {
-                source: 'CSS科技',
-                target: '浏览器有限公司',
-                name: '参股'
-              },
-              {
-                source: 'JavaScript科技',
-                target: '浏览器有限公司',
-                name: '参股'
-              },
-              {
-                source: 'Chrome',
-                target: '浏览器有限公司',
-                name: '董事'
-              },
-              {
-                source: 'IE',
-                target: '浏览器有限公司',
-                name: '董事'
-              },
-              {
-                source: 'Firefox',
-                target: '浏览器有限公司',
-                name: '董事'
-              },
-              {
-                source: 'Safari',
-                target: '浏览器有限公司',
-                name: '董事'
-              },
-              {
-                source: 'Chrome',
-                target: 'JavaScript科技',
-                name: '法人'
-              }
+            [
+              //   { type: 'add', name: '选择部件', action: () => this.add() }
             ]
-          }
-        ]
+          ]
+        },
+        table: {
+          prefixHeight: 20,
+          tableHeight: 280,
+          calcTableHeight: false, // 是否开启表格自动高度计算
+          immediateLoad: true, // 组件穿件是否马上加载数据
+          loadType: 'list', // 加载方式 page选择分页, list滚动到底部加载（list 不显示分页）
+          columns: [
+            { label: '序号', type: 'index' },
+            { label: '人员名称', key: 'name' },
+            { label: '人员类型', key: 'personTypeName' },
+            {
+              label: '操作',
+              width: 140,
+              render: (h, parmas) => {
+                return (
+                  <div class='flex-table-cell'>
+                    <div class='btn-text'>选择</div>
+                  </div>
+                );
+              }
+            }
+          ]
+        }
       },
-      chart7: {
-        backgroundColor: '#323a5e',
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: { // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-          }
-        },
-        grid: {
-          left: '2%',
-          right: '4%',
-          bottom: '14%',
-          top: '16%',
-          containLabel: true
-        },
-        legend: {
-          data: ['1', '2', '3'],
-          right: 10,
-          top: 12,
-          textStyle: {
-            color: '#fff'
-          },
-          itemWidth: 12,
-          itemHeight: 10
-          // itemGap: 35
-        },
-        xAxis: {
-          type: 'category',
-          data: ['2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019'],
-          axisLine: {
-            lineStyle: {
-              color: 'white'
-
-            }
-          },
-          axisLabel: {
-            // interval: 0,
-            // rotate: 40,
-            textStyle: {
-              fontFamily: 'Microsoft YaHei'
-            }
-          }
-        },
-        yAxis: {
-          type: 'value',
-          max: '1200',
-          axisLine: {
-            show: false,
-            lineStyle: {
-              color: 'white'
-            }
-          },
-          splitLine: {
-            show: true,
-            lineStyle: {
-              color: 'rgba(255,255,255,0.3)'
-            }
-          },
-          axisLabel: {}
-        },
-        series: [
-          {
-            name: '1',
-            type: 'bar',
-            barWidth: '15%',
-            itemStyle: {
-              normal: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                  offset: 0,
-                  color: '#fccb05'
-                }, {
-                  offset: 1,
-                  color: '#f5804d'
-                }]),
-                barBorderRadius: 12
-              }
-            },
-            data: [400, 400, 300, 300, 300, 400, 400, 400, 300]
-          },
-          {
-            name: '2',
-            type: 'bar',
-            barWidth: '15%',
-            itemStyle: {
-              normal: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                  offset: 0,
-                  color: '#8bd46e'
-                }, {
-                  offset: 1,
-                  color: '#09bcb7'
-                }]),
-                barBorderRadius: 11
+      config2: {
+        method: 'POST',
+        url: baseURL + '/car/getList',
+        search: {
+          data: [
+            [
+              {
+                value: null,
+                type: 'input',
+                key: 'carNo',
+                placeholder: '车牌号'
+              },
+              {
+                type: 'daterange',
+                value: null,
+                initValue: [
+                  '2020-09-23',
+                  '2020-09-23'
+                ],
+                key1: 'beginDate',
+                key2: 'endDate',
+                placeholder1: '开始日期',
+                placeholder2: '结束日期'
+              },
+              {
+                value: null,
+                type: 'date',
+                key: 'carNo',
+                placeholder: '时间',
+                pickerOptions: {
+                  disabledDate(time) {
+                    return time.getTime() + (1000 * 60 * 60 * 24) > Date.now();
+                  }
+                }
+              },
+              { type: 'search', name: '查询' },
+              { type: 'reset', name: '重置' }
+            ],
+            [
+              // todo ②只有项目组账号有新增数据的权限所以默认没有新增操作
+              // { type: 'add', name: '新增', action: () => this.add() },
+              { type: 'del', name: '删除', action: () => this.del() },
+              {
+                type: 'more', options: [
+                  { icon: 'el-icon-folder-opened', label: '导出', action: () => this.export() },
+                  // { icon: 'el-icon-folder', label: '导入', action: () => this.importExcel() },
+                  { icon: 'el-icon-minus', label: '停用', action: () => this.deactivate() }
+                ]
               }
 
+            ]
+          ]
+        },
+        table: {
+          calcTableHeight: true, // 是否开启表格自动高度计算
+          columns: [
+            {
+              label: '选择', // 表格表头名字
+              type: 'selection' // type 一般不需要 仅仅  selection 、 index
             },
-            data: [400, 500, 500, 500, 500, 400, 400, 500, 500]
-          },
-          {
-            name: '3',
-            type: 'bar',
-            barWidth: '15%',
-            itemStyle: {
-              normal: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                  offset: 0,
-                  color: '#248ff7'
-                }, {
-                  offset: 1,
-                  color: '#6851f1'
-                }]),
-                barBorderRadius: 11
+            { label: '序号', type: 'index' },
+            {
+              label: '车牌号',
+              key: 'no',
+              render: (h, parmas) => {
+                const { row } = parmas;
+                return (
+                  <a class='linkText' onClick={(e) => {
+                    e.stopPropagation();
+                    return this.getCarInfo(row.carId);
+                  }}> {row.no} </a>);
               }
             },
-            data: [400, 600, 700, 700, 1000, 400, 400, 600, 700]
-          }
-        ]
+            {
+              key: 'deviceCode',
+              label: '车载设备编号'
+            },
+            {
+              key: 'carTypeDesc',
+              label: '车辆类型'
+            },
+            {
+              key: 'powerTypeDesc',
+              label: '动力类型'
+            },
+            {
+              key: 'brand',
+              label: '车辆品牌'
+            },
+            {
+              key: 'drivingLicenseRegisterDate',
+              label: '行驶证注册日期'
+            },
+            {
+              key: 'vehicleTare',
+              label: '核定总质量（kg）',
+              width: 125
+            },
+            {
+              key: 'streetName',
+              label: '街道'
+            },
+            { key: 'districtName', label: '辖区' },
+            {
+              key: 'ownerType',
+              label: '权属类型',
+              render: (h, parmas) => {
+                const { row } = parmas;
+                return <span> {row.ownerType === 0 ? '自有' : '租赁'} </span>;
+              }
+            },
+            {
+              key: 'workState',
+              label: '工作状态',
+              render: (h, parmas) => {
+                const { row } = parmas;
+                return <span> {row.workState === 0 ? '正常' : '停用'} </span>;
+              }
+            },
+            {
+              label: '操作',
+              width: 80,
+              render: (h, parmas) => {
+                const { row } = parmas;
+                return (
+                  <div class='flex-table-cell'>
+                    <div class='btn-text' onClick={() => this.editCar(row.carId)}>
+                      <i class='el-icon-edit-outline' /> 编辑
+                    </div>
+                  </div>);
+              }
+            }
+          ]
+        }
+      },
+      selectCascade: [],
+      config: {
+        parentConfig: {
+          keyName: 'code',
+          keyCode: 'sectionId',
+          placeholder: '企业选择',
+          inputWidth: '180px',
+          isNoPage: false, // 设置不分页
+          method: 'get', // 请求方法
+          url: '/static/section.json',
+          column: [ // 仅仅作为展示用户使用
+            { key: 'code', label: '名称' },
+            { key: 'statusStr', label: '状态' }
+          ]
+        },
+        childrenConfig: {
+          keyName: 'code',
+          keyCode: 'sectionId',
+          placeholder: '司机选择',
+          inputWidth: '180px',
+          isNoPage: false, // 设置不分页
+          relativeKey: 'companyId', // 关联依赖加载id -关键key 级联关系
+          method: 'get', // 请求方法
+          url: '/static/section.json',
+          column: [ // 仅仅作为展示用户使用
+            { key: 'code', label: '名称' },
+            { key: 'statusStr', label: '状态' }
+          ]
+        }
       }
-
     };
   },
-  methods: {
-    // /* 饼图的动态效果 */
-    // pieAnimate() {
-    //   const that = this;
-    //   let currentIndex = -1;
-    //   const myPie = that.$refs.myPie;
-    //   setInterval(function() {
-    //     setTimeout(function() {
-    //       const dataLen = that.pieData.length;
-    //       // 取消之前高亮的图形
-    //       myPie.dispatchAction({
-    //         type: 'downplay',
-    //         seriesIndex: 0,
-    //         dataIndex: currentIndex
-    //       });
-    //       currentIndex = (currentIndex + 1) % dataLen;
-    //       // 高亮当前图形
-    //       myPie.dispatchAction({
-    //         type: 'highlight',
-    //         seriesIndex: 0,
-    //         dataIndex: currentIndex
-    //       });
-    //       $('.pie-legend').eq(currentIndex).focus();
-    //       // 显示 tooltip
-    //       myPie.dispatchAction({
-    //         type: 'showTip',
-    //         seriesIndex: 0,
-    //         dataIndex: currentIndex
-    //       });
-    //     }, 0);
-    //   }, 2000);
-    // },
-    // connectPie(index) {
-    //   this.$refs.myPie.dispatchAction({
-    //     // 高亮当前图形
-    //     type: 'highlight',
-    //     seriesIndex: 0,
-    //     dataIndex: index
-    //   });
-    //   this.$refs.myPie.dispatchAction({
-    //     type: 'showTip',
-    //     seriesIndex: 0,
-    //     dataIndex: index
-    //   });
-    // },
-    // loseConnect(index) {
-    //   this.$refs.myPie.dispatchAction({
-    //     // 取消之前高亮的图形
-    //     type: 'downplay',
-    //     seriesIndex: 0,
-    //     dataIndex: index
-    //   });
-    //   this.$refs.myPie.dispatchAction({
-    //     type: 'hideTip',
-    //     seriesIndex: 0,
-    //     dataIndex: index
-    //   });
-    // }
-  },
   mounted() {
-    console.log(this.$ELEMENT);
+    // 假如是编辑 则需要手动处理一下参数
+    setTimeout(_ => {
+      this.selectCascade = [
+        { label: '父级联', value: '132123123' },
+        { label: '子级联', value: '132123123' }
+      ];
+    }, 2000);
+  },
+  methods: {
+    selectTreeChange(item) {
+      console.log(item, '-xx-');
+    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.echarts {
-  width: 100%;
-}
-
-.my-pie {
-  width: 100%;
-}
-
-.pie-legend {
-  margin-bottom: 10px;
-  height: 34px;
-  line-height: 34px;
-  border: 1px solid #153b7c;
-  color: #b2e1ff;
-  text-indent: 5px;
-  background-size: 100% 100%;
-  cursor: pointer;
-  text-align: left;
-}
-
-.pie-legend:hover {
-  background: rgba(33, 100, 175, 0.8);
-}
-
-.pie-legend i {
-  display: inline-block;
-  width: 6px;
-  height: 12px;
-  margin-right: 10px;
-}
-
-.pie-legend span:last-child {
-  display: inline-block;
-  font-size: 20px;
-  color: #2cffe4;
-  font-weight: bold;
-  margin-right: 10px;
-}
 </style>

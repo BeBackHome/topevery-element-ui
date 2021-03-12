@@ -1,6 +1,6 @@
 {
   "name": "topevery-element-ui",
-  "version": "0.0.50",
+  "version": "0.0.51",
   "description": "A Component Library for Vue.js.",
   "main": "lib/topevery-element-ui.common.js",
   "license": "MIT",
