@@ -1,6 +1,7 @@
 <!-- CubeTable  组件 - 表格 -->
 <template>
   <el-table
+    :show-header="showHeader"
     slot="table"
     :ref="name"
     v-loadMore="loadMore"

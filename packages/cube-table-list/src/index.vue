@@ -21,6 +21,7 @@
       <CubeTable
         slot="main"
         :ref="name"
+        :showHeader="initConfig.table.showHeader"
         class="CubeTable"
         :config="initConfig.table"
         :rowKey="initConfig.table.rowKey"
@@ -124,6 +125,7 @@ export default {
           tableExpand: false, // 是否是展开表格
           tableHeight: 400, // 如果关闭自动开启计算高度 - 这个字段建议传入。
           calcTableHeight: true, // 是否开启表格自动高度计算 - 开启则忽略tableHeight设置的高度
+          showHeader: true,
           loadType: 'page', // 加载方式 page选择分页, list滚动到底部加载
           prefixHeight: 10,
           columns: [],

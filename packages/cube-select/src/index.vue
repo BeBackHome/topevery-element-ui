@@ -1,101 +1,103 @@
 <!--
  * @Author: shiliangL
  * @Date: 2021-03-10 17:10:45
- * @LastEditTime: 2021-03-12 09:55:55
+ * @LastEditTime: 2021-03-15 08:29:10
  * @LastEditors: Do not edit
  * @Description: 选择组件 提供分页检索选择应数据量大列表卡顿以及分页接口数据选择
 -->
 <template>
-  <el-popover
-    ref="cube-popover"
-    popper-class="cube-select2x"
-    class="popover"
-    :width="defaultConfig.popoverWidth"
-    trigger="click"
-    placement="bottom-start"
-    :visible-arrow="false"
-    @hide="hidePopover"
-  >
-    <el-input
-      slot="reference"
-      v-model.trim="selectValue"
-      :style="{width: defaultConfig.inputWidth? defaultConfig.inputWidth : '' }"
-      :placeholder="placeholder2"
-      :size="defaultConfig.size"
-      :disabled="disabled"
-      :filterable="defaultConfig.filterable"
-      :clearable="defaultConfig.clearable"
-      @focus="focus"
-      @blur="blur"
-      @clear="clear"
-      @input="input"
-    />
-
-    <div
-      v-loading="loading"
-      element-loading-text="拼命加载中"
-      element-loading-spinner="el-icon-loading"
-      element-loading-background="rgba(242, 248, 254, 0.9)"
-      style="text-align: right; margin: 0"
+  <span class="cube-select">
+    <el-popover
+      ref="cube-popover"
+      popper-class="cube-select2x"
+      class="popover"
+      :width="defaultConfig.popoverWidth"
+      trigger="click"
+      placement="bottom-start"
+      :visible-arrow="false"
+      @hide="hidePopover"
     >
-      <el-table
-        ref="tablePage"
-        :data="defaultConfig.isStaticOptions ? filterTableData : tableData"
-        style="width: 100%"
-        size="mini"
-        :height="defaultConfig.tableHeight"
-        highlight-current-row
-        :row-style="rowStyle"
-        element-loading-text="数据加载中..."
-        :show-header="defaultConfig.showHeader"
-        @row-click="rowClick"
+      <el-input
+        slot="reference"
+        v-model.trim="selectValue"
+        :style="{width: defaultConfig.inputWidth? defaultConfig.inputWidth : '' }"
+        :placeholder="placeholder2"
+        :size="defaultConfig.size"
+        :disabled="disabled"
+        :filterable="defaultConfig.filterable"
+        :clearable="defaultConfig.clearable"
+        @focus="focus"
+        @blur="blur"
+        @clear="clear"
+        @input="input"
+      />
+
+      <div
+        v-loading="loading"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(242, 248, 254, 0.9)"
+        style="text-align: right; margin: 0"
       >
-        <el-table-column
-          v-if="defaultConfig.showIndex"
-          label="序号"
-          type="index"
-          :index="indexMethod"
-        />
-        <el-table-column
-          v-for="(item,index) in defaultConfig.column"
-          :key="index"
-          show-overflow-tooltip
-          :width="item.width ? item.width : null "
-          :header-align="defaultConfig.headerAlign"
-          :align="item.align ? item.align : 'center' "
-          :prop="item.prop"
-          :label="item.label"
+        <el-table
+          ref="tablePage"
+          :data="defaultConfig.isStaticOptions ? filterTableData : tableData"
+          style="width: 100%"
+          size="mini"
+          :height="defaultConfig.tableHeight"
+          highlight-current-row
+          :row-style="rowStyle"
+          element-loading-text="数据加载中..."
+          :show-header="defaultConfig.showHeader"
+          @row-click="rowClick"
         >
-          <template slot-scope="scope">
-            <template v-if="!item.render">
-              <template>
-                <span :title="scope.row[item.key]">{{ scope.row[item.key] }}</span>
+          <el-table-column
+            v-if="defaultConfig.showIndex"
+            label="序号"
+            type="index"
+            :index="indexMethod"
+          />
+          <el-table-column
+            v-for="(item,index) in defaultConfig.column"
+            :key="index"
+            show-overflow-tooltip
+            :width="item.width ? item.width : null "
+            :header-align="defaultConfig.headerAlign"
+            :align="item.align ? item.align : 'center' "
+            :prop="item.prop"
+            :label="item.label"
+          >
+            <template slot-scope="scope">
+              <template v-if="!item.render">
+                <template>
+                  <span :title="scope.row[item.key]">{{ scope.row[item.key] }}</span>
+                </template>
+              </template>
+              <template v-else>
+                <render
+                  :column="item"
+                  :index="index"
+                  :render="item.render"
+                  :row="scope.row"
+                />
               </template>
             </template>
-            <template v-else>
-              <render
-                :column="item"
-                :index="index"
-                :render="item.render"
-                :row="scope.row"
-              />
-            </template>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        v-if="!defaultConfig.isNoPage"
-        small
-        :pager-count="5"
-        class="pagination"
-        layout="total,prev, pager, next"
-        :current-page="defaultConfig.pagination.currentPage"
-        :page-size="defaultConfig.pagination.size"
-        :total="defaultConfig.pagination.total"
-        @current-change="handleCurrentChange"
-      />
-    </div>
-  </el-popover>
+          </el-table-column>
+        </el-table>
+        <el-pagination
+          v-if="!defaultConfig.isNoPage"
+          small
+          :pager-count="5"
+          class="pagination"
+          layout="total,prev, pager, next"
+          :current-page="defaultConfig.pagination.currentPage"
+          :page-size="defaultConfig.pagination.size"
+          :total="defaultConfig.pagination.total"
+          @current-change="handleCurrentChange"
+        />
+      </div>
+    </el-popover>
+  </span>
 </template>
 
 <script>
