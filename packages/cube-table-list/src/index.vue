@@ -47,7 +47,7 @@
       <!-- 选择分页 还是滚动到底部加载 -->
       <el-pagination
         slot="foot"
-        v-if="initConfig.table.loadType ==='page'"
+        v-if="initConfig.table.tableDataType ==='page'"
         style="text-align: center;margin-top: 4px;"
         background
         :current-page="initConfig.pagination.currentPage"
@@ -119,14 +119,14 @@ export default {
         table: {
           initSeletTheFirst: false, // 是否加载完成就默认选择第一个数据
           immediateLoad: true, // 是否组件穿件就加载
-          tableDataType: 'page', // 后台返回数据结构 默认是分页 list不分页列表数据结构
           rowKey: 'id', // 展开表格唯一标识（展开唯一 + 滚动加载判断是否重复）
           expandOnly: true, // 是否展开唯一
           tableExpand: false, // 是否是展开表格
           tableHeight: 400, // 如果关闭自动开启计算高度 - 这个字段建议传入。
           calcTableHeight: true, // 是否开启表格自动高度计算 - 开启则忽略tableHeight设置的高度
           showHeader: true,
-          loadType: 'page', // 加载方式 page选择分页, list滚动到底部加载
+          loadType: 'page', // 加载方式 page数据结构的时候 设置list滚动到底部加载加载下一页
+          tableDataType: 'page', // 后台返回数据结构 默认是分页 list 不分页列表数据结构
           prefixHeight: 10,
           columns: [],
           data: []
@@ -271,15 +271,14 @@ export default {
               this.initConfig.pagination.total = 0;
               if (loadType === 'page') this.initConfig.table.data = [];
             }
+            this.$emit('afterLoad', result[pageList], params);
           } else {
-            const result = response[data];
+            const result = response[data] || [];
+            this.initConfig.table.data = result;
+            this.$emit('afterLoad', result, params);
             if (Array.isArray(result) && result.length) {
-              const reusltList = result[pageList] || [];
-              this.initConfig.table.data = reusltList;
               // 默认选择第一个数据
-              if (reusltList.length) {
-                this.afterLoadSelectFirstFn();
-              }
+              this.afterLoadSelectFirstFn();
             }
           }
         }

@@ -1,7 +1,7 @@
 <!--
  * @Author: shiliangL
  * @Date: 2021-03-10 17:10:45
- * @LastEditTime: 2021-03-15 08:29:10
+ * @LastEditTime: 2021-05-12 13:09:30
  * @LastEditors: Do not edit
  * @Description: 选择组件 提供分页检索选择应数据量大列表卡顿以及分页接口数据选择
 -->
@@ -177,6 +177,7 @@ export default {
       recordSelect: null,
       visible: false,
       loading: false,
+      isInputSearch: 0, // 是否是输入后检索
       selectValue: '',
       tableData: [],
       filterTableData: [], // 静态选项表格
@@ -317,12 +318,15 @@ export default {
     },
     miss() {
       this.visible = false;
-      this.selectValue = '';
-      const { recordSelect } = this;
-      const { keyName } = this.defaultConfig;
-      if (recordSelect) {
-        this.selectValue = recordSelect[keyName];
-        this.placeholder2 = this.defaultConfig.placeholder;
+      const { isInputSearch } = this;
+      if (!isInputSearch) {
+        this.selectValue = '';
+        const { recordSelect } = this;
+        const { keyName } = this.defaultConfig;
+        if (recordSelect) {
+          this.selectValue = recordSelect[keyName];
+          this.placeholder2 = this.defaultConfig.placeholder;
+        }
       }
     },
     handleCurrentChange(value) {
@@ -343,9 +347,11 @@ export default {
       this.$refs['tablePage'] && this.$refs['tablePage'].setCurrentRow(currentRow);
     },
     hidePopover() {
+      this.isInputSearch = 0;
       this.$emit('visibleChange', false);
     },
     rowClick(row) {
+      this.isInputSearch = 0;
       const { copySelectValue } = this;
       const { keyName, keyCode, otherProps } = this.defaultConfig;
       const isChange = copySelectValue === row[keyName];
@@ -368,6 +374,7 @@ export default {
     input(e) {
       const { isStaticOptions } = this.defaultConfig;
       if (!isStaticOptions) {
+        this.isInputSearch = 1;
         this.defaultConfig.pagination.currentPage = 1;
         this.inputChange();
       } else {
@@ -387,7 +394,7 @@ export default {
       }
     },
     fetchTableData() {
-      const { extraParam, selectValue } = this;
+      const { extraParam, selectValue, isInputSearch } = this;
       const { url, method, searchName, isNoPage, isStaticOptions, relativeKey } = this.defaultConfig;
       if (relativeKey) {
         if (!extraParam[relativeKey]) return; // 不传递关联key 不需要加载
@@ -397,7 +404,7 @@ export default {
       const { currentPage, size } = this.defaultConfig.pagination;
       this.tableData = [];
       this.loading = true;
-      const searchParams = { [searchName]: selectValue };
+      const searchParams = { [searchName]: isInputSearch ? selectValue : '' };
       const extraParams = isObject(extraParam) ? Object.keys(extraParam).length ? { ...extraParam } : {} : {};
       const searchParams2extraParams = Object.assign(searchParams, extraParams);
       const pageParams = { pageIndex: currentPage, pageSize: size };

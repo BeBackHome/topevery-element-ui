@@ -1,16 +1,16 @@
 <!--
  * @Author: shiliangL
  * @Date: 2021-02-23 15:37:35
- * @LastEditTime: 2021-03-20 18:38:04
+ * @LastEditTime: 2021-05-12 12:21:50
  * @LastEditors: Do not edit
  * @Description:人员定位终端管理 SupervisePeoplePosition
 -->
 <template>
   <div class="table">
-    <cube-Table-List
-      ref="CubeTableList"
-      class="page"
-      :config="config"
+    <cube-select
+      v-model="managerCubeSelect"
+      style="width: 100%;"
+      :config="managerConfig"
     />
   </div>
 </template>
@@ -21,6 +21,23 @@ export default {
   name: 'SupervisePeoplePosition',
   data() {
     return {
+      managerCubeSelect: null,
+      managerConfig: {
+        keyName: 'name',
+        keyCode: 'personId',
+        inputWidth: '100%',
+        size: 'mini',
+        method: 'POST',
+        searchName: 'name',
+        focusOnload: false,
+        url: 'http://192.168.5.11:49210/person/getPersonListPage',
+        tableHeight: 220,
+        popoverWidth: 300, // 弹层宽度
+        column: [ // 仅仅作为展示用户使用
+          { key: 'name', label: '名称' },
+          { key: 'personTypeName', label: '类型' }
+        ]
+      },
       trackAdd: {
         visible: false,
         data: {
@@ -37,61 +54,12 @@ export default {
       },
       config: {
         method: 'POST',
-        url: `${this.$prefixUrl}` + '/PersonnelTerminal/getPageList',
+        // url: `${this.$prefixUrl}` + '/personAttendanceUnqualifiedStatistics/getListPerson',
+        url: 'http://192.168.5.11:49210/personAttendanceUnqualifiedStatistics/getListPerson',
         search: {
           data: [
             [
-              {
-                type: 'cubeSelect',
-                value: null,
-                class: 'w140',
-                key: 'sectionId',
-                extraParam: { // 其他请求拓展参数
-                  rootType: 1,
-                  showGeomCol: false
-                },
-                config: {
-                  placeholder: '选择企业',
-                  keyCode: 'value',
-                  keyName: 'label',
-                  children: 'children',
-                  method: 'POST',
-                  url: `${this.$prefixUrl}` + '/company/getPageList'
-                }
-              },
-              {
-                value: null,
-                type: 'input',
-                key: 'personName',
-                placeholder: '人员姓名',
-                class: 'w140'
-              },
-              {
-                value: null,
-                type: 'input',
-                key: 'clientKey',
-                placeholder: '设备ID',
-                class: 'w140'
-              },
-              {
-                type: 'option', class: 'w150', value: null, key: 'onlineType', placeholder: '是否在线', options: [
-                  { value: 0, label: '离线' },
-                  { value: 1, label: '在线' }
-                ]
-              },
-              {
-                type: 'daterange',
-                value: null,
-                initValue: [
 
-                ],
-                key1: 'beginDate',
-                key2: 'endDate',
-                placeholder1: '开始日期',
-                placeholder2: '结束日期'
-              },
-              { type: 'search', name: '查询' },
-              { type: 'reset', name: '重置' }
             ],
             [
               { type: 'button', icon: 'el-icon-folder-opened', name: '导出', action: () => this.export() }
@@ -99,74 +67,34 @@ export default {
           ]
         },
         table: {
-          showHeader: false,
-          tableHeight: 250,
-          calcTableHeight: true, // 是否开启表格自动高度计算
+          prefixHeight: 20,
+          tableHeight: 480,
+          calcTableHeight: false, // 是否开启表格自动高度计算
+          immediateLoad: true, // 组件穿件是否马上加载数据
+          // loadType: 'list', // 加载方式 page选择分页, list滚动到底部加载（list 不显示分页）
+          tableDataType: 'list',
           columns: [
-            {
-              label: '序号', // 表格表头名字
-              type: 'index' // type 一般不需要 仅仅  selection 、 index
-            },
-
-            {
-              label: '人员姓名', // 表格表头名字
-              key: 'personName' // 数据映射key
-            },
-            {
-              label: '人员类型', // 表格表头名字
-              key: 'name'
-            },
-            {
-              label: '所属企业', // 表格表头名字
-              key: 'sectionName'
-            },
-            {
-              label: '设备ID', // 表格表头名字
-              key: 'clientKey'
-            },
-            {
-              label: '是否在线', // 表格表头名字
-              key: 'onlineType',
-              render: (h, parmas) => {
-                const typeMap = {
-                  0: '离线',
-                  1: '在线'
-                };
-                const { row } = parmas;
-                return <span> {typeMap[row.onlineType]} </span>;
-              }
-            },
-            {
-              label: '最后通讯时间', // 表格表头名字
-              key: 'lastOnlineDate'
-            },
-            {
-              label: '异常报警', // 表格表头名字
-              key: 'alarmStatus',
-              render: (h, parmas) => {
-                const typeMap = {
-                  0: '正常',
-                  1: 'SOS求救',
-                  2: '疲劳驾驶',
-                  3: '低电报警',
-                  4: '超速报警',
-                  5: '断电报警',
-                  6: '震动报警'
-                };
-                const { row } = parmas;
-                return <span> {typeMap[row.alarmStatus]} </span>;
-              }
-            },
+            { label: '展开', type: 'expand' },
+            { label: '序号', type: 'index' },
+            { label: '片区名称', key: 'no' },
+            { label: '姓名', key: 'carTypeDesc' },
+            { label: '人员类型', key: 'companyName' },
+            { label: '日期', key: 'manageDeptName' },
+            { label: '实际出勤总时长', key: 'manageDeptName' },
+            { label: '片区内总里程数', key: 'manageDeptName' },
+            { label: '出勤情况', key: 'manageDeptName' },
             {
               label: '操作',
-              width: 150,
+              width: 80,
               render: (h, parmas) => {
                 const { row } = parmas;
                 return (
                   <div class='flex-table-cell'>
-                    <div class='btn-text' onClick={ () => this.showRecords(row) }>通讯记录 </div>|
-                    <div class='btn-text' onClick={ () => this.showTrace(row) }> 人员轨迹 </div>
-                  </div>);
+                    <div class='btn-text' onClick={() => this.openOverLayType(1, row)}>
+                      轨迹回放
+                    </div>
+                  </div>
+                );
               }
             }
           ]
@@ -174,7 +102,13 @@ export default {
       }
     };
   },
+  mounted() {
+
+  },
   methods: {
+    afterLoad(list, params) {
+      console.log(list, params);
+    },
     refresh() {
       this.$refs['CubeTableList'] && this.$refs['CubeTableList'].fetchList();
     },
@@ -182,12 +116,12 @@ export default {
       return this.$refs['CubeTableList'] && this.$refs['CubeTableList'].getTableSelection();
     },
     showRecords(row) {
-    // <!-- deviceType 0 人  其他为车辆 -->
-      this.$setKeyValue(this.communicationAdd, { visible: true, data: { type: 0, id: row.deviceId, deviceType: 0, dialogTitle: '设备通讯记录查询' }});
+      // <!-- deviceType 0 人  其他为车辆 -->
+      this.$setKeyValue(this.communicationAdd, { visible: true, data: { type: 0, id: row.deviceId, deviceType: 0, dialogTitle: '设备通讯记录查询' } });
     },
     showTrace(row) {
-    // <!-- deviceType 0 人  其他为车辆 -->
-      this.$setKeyValue(this.trackAdd, { visible: true, data: { type: 0, id: row.deviceId, deviceType: 0, dialogTitle: '人员轨迹回放查询' }});
+      // <!-- deviceType 0 人  其他为车辆 -->
+      this.$setKeyValue(this.trackAdd, { visible: true, data: { type: 0, id: row.deviceId, deviceType: 0, dialogTitle: '人员轨迹回放查询' } });
     }
   }
 };
