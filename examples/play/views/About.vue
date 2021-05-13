@@ -1,7 +1,7 @@
 <!--
  * @Author: shiliangL
  * @Date: 2021-02-23 15:37:35
- * @LastEditTime: 2021-05-12 12:21:50
+ * @LastEditTime: 2021-05-12 13:33:58
  * @LastEditors: Do not edit
  * @Description:人员定位终端管理 SupervisePeoplePosition
 -->
@@ -9,8 +9,16 @@
   <div class="table">
     <cube-select
       v-model="managerCubeSelect"
+      :extra-param="extraParam"
       style="width: 100%;"
       :config="managerConfig"
+    />
+    <cube-Table-List
+      ref="CubeTableList"
+      class="page"
+      :extraParam="extraParam"
+      :config="config"
+      @afterLoad="afterLoad"
     />
   </div>
 </template>
@@ -21,23 +29,7 @@ export default {
   name: 'SupervisePeoplePosition',
   data() {
     return {
-      managerCubeSelect: null,
-      managerConfig: {
-        keyName: 'name',
-        keyCode: 'personId',
-        inputWidth: '100%',
-        size: 'mini',
-        method: 'POST',
-        searchName: 'name',
-        focusOnload: false,
-        url: 'http://192.168.5.11:49210/person/getPersonListPage',
-        tableHeight: 220,
-        popoverWidth: 300, // 弹层宽度
-        column: [ // 仅仅作为展示用户使用
-          { key: 'name', label: '名称' },
-          { key: 'personTypeName', label: '类型' }
-        ]
-      },
+      extraParam: {},
       trackAdd: {
         visible: false,
         data: {
@@ -103,11 +95,12 @@ export default {
     };
   },
   mounted() {
-
+    const extraParam = { 'pageIndex': 1, 'pageSize': 30, 'manageDeptId': 'DBAD7F40-6EC8-47DE-AFA6-571DEE441EA7', 'sectionId': 'EE6B9987-F2E4-4EB6-BB42-DD44A8C6CC6B', 'columnName': 'workFailedPersonNum', 'date': '2021-04-30' };
+    this.extraParam = extraParam;
   },
   methods: {
-    afterLoad(list, params) {
-      console.log(list, params);
+    afterLoad(data, searchParams) {
+      console.log(data, searchParams);
     },
     refresh() {
       this.$refs['CubeTableList'] && this.$refs['CubeTableList'].fetchList();
