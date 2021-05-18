@@ -419,8 +419,13 @@ export default {
             params[item['key']] = item.multiple ? item.value ? item.value.toString() : item.value : item.value;
           } else if (timeRangeTime.includes(item['type'])) {
             if (item.value) {
-              params[item['key1']] = item.value[0] ? item.value[0] : '';
-              params[item['key2']] = item.value[1] ? item.value[1] : '';
+              if (item['type'] === 'daterange' && item.initTimeString) {
+                params[item['key1']] = item.value[0] ? item.value[0] + ' 00:00:00' : '';
+                params[item['key2']] = item.value[1] ? item.value[1] + ' 23:59:59' : '';
+              } else {
+                params[item['key1']] = item.value[0] ? item.value[0] : '';
+                params[item['key2']] = item.value[1] ? item.value[1] : '';
+              }
             } else {
               params[item['key1']] = null;
               params[item['key2']] = null;

@@ -1,7 +1,7 @@
 /*
  * @Author: shiliangL
  * @Date: 2020-05-22 11:02:08
- * @LastEditTime: 2020-06-05 09:48:07
+ * @LastEditTime: 2021-05-18 20:16:33
  * @LastEditors: Do not edit
  * @Description:
  * @FilePath: /topevery-element-ui-v2/examples/play/router/index.js
@@ -23,7 +23,7 @@ export default [
     component: About
   },
   {
-    path: '/cubeViewer',
+    path: '/cubeViewer2',
     name: 'CubeViewer',
     component: CubeViewer
   },
