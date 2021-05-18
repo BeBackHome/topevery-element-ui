@@ -316,3 +316,16 @@ export function oneOf(value, validList) {
   }
   return false
 }
+
+export function debounceShake (wait,fn) {
+  let timer = null
+  return function () {
+    if (timer) {
+      clearTimeout(timer)
+      timer = null
+    }
+    timer = setTimeout(() => {
+      fn.apply(this, arguments)
+    }, wait)
+  }
+}

@@ -1,7 +1,7 @@
 <!--
  * @Author: shiliangL
  * @Date: 2020-06-05 09:48:22
- * @LastEditTime: 2021-03-12 09:14:20
+ * @LastEditTime: 2021-05-19 00:23:59
  * @LastEditors: Do not edit
  * @Description: 
  * @FilePath: /topevery-element-ui-v2/examples/play/views/CubeCascade.vue
@@ -11,7 +11,6 @@
     cube-select-tree 2
     <!-- <cube-select-cascade v-model="selectCascade" @config="config" /> -->
     <cube-Table-List
-      v-if="0"
       ref="CubeTableList"
       class="page"
       :extra-param="extraParam"
@@ -67,42 +66,38 @@ export default {
         children: 'children',
         method: 'POST',
         otherProps: ['dataType'],
-        url: 'http://192.168.5.6:49210/getSectionTree'
+        url: 'http://192.168.5.11:49052/getSectionTree'
       },
       extraParam: {
-        'chooseList': [
-          'A4D34B07-B145-445E-95E6-BA3EFCBEEEDB',
-          '3C08DCA5-8451-495F-A68F-798CB85CE775',
-          'CB2384A8-D13D-4269-88C4-ABB3A8EECDB3',
-          '04A7EFD2-5E81-4FCB-AF39-071B71B076DC',
-          'E96656D7-7202-4CDB-8AA9-08EB85D9E625',
-          '2bfc7567-2623-4567-89ab-e5c2a2a4ad22',
-          '9C97F522-E8E8-4A80-A59A-7332315AE11E',
-          'D2BE7152-DB6C-4C9A-A965-99A98B363AEF',
-          '85B1F05E-BC8E-4D0B-AEB9-2BCD42A8A208',
-          'A620C9AD-2FA4-4019-8F6C-3C9EAB9E5174',
-          'FFE49BEB-221F-481C-B368-29CCE68E87C9',
-          '88070170-F6FC-4E48-A45C-5E061DB380FB',
-          '90891813-449E-448D-A373-95C31D5B2878',
-          '2198434C-88EF-4B80-A2BA-A4762AB6F5A8',
-          '060B992A-A92B-4F54-B2A8-278FA7DC5E25',
-          '7BC1E08B-3D59-459B-B072-ABB3B8EBFBA7'
-        ],
-        'personTypeList': [
-          'EE9A7851-EF73-4A80-8AC1-E86635A270C9',
-          'C24D3966-A1BC-4F17-9C05-AF47F452C437',
-          '7A833A27-29A8-49A3-9CCE-C594AFB8CD9A',
-          '55A5A17F-9B8D-489C-BEDB-6094EFEF498A'
-        ],
-        'workState': 0,
-        'sectionAreaId': '80E7A774-149D-423A-BF6A-7A72279CB69D'
+        rootType: 1,
+        showGeomCol: false
       },
       config3: {
         method: 'POST',
-        url: 'http://114.215.84.175:49210' + '/personWorkGrid/getSchedulingPersonPage',
+        url: 'http://192.168.5.11:49052' + '/personWorkGrid/getSchedulingPersonPage',
         search: {
           data: [
             [
+              {
+                type: 'cubeSelect',
+                value: null,
+                class: 'w140',
+                key: 'compnyId',
+                extraParam: { // 其他请求拓展参数
+                  rootType: 1,
+                  showGeomCol: false
+                },
+                config: {
+                  placeholder: '选择企业',
+                  keyCode: 'value',
+                  keyName: 'label',
+                  method: 'POST',
+                  url: 'http://192.168.5.11:49052/getCompanySelectPageList',
+                  column: [
+                    { key: 'label', label: '名称' }
+                  ]
+                }
+              },
               {
                 type: 'input',
                 key: 'name',

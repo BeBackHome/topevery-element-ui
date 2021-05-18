@@ -59,10 +59,11 @@
 
 <script>
 
+// import { debounce } from 'throttle-debounce';
 import Popup from 'topevery-element-ui/src/utils/popup';
 import Migrating from 'topevery-element-ui/src/mixins/migrating';
 import emitter from 'topevery-element-ui/src/mixins/emitter';
-import debounce from 'throttle-debounce/debounce';
+import { debounceShake } from 'topevery-element-ui/src/utils/index.new';
 
 export default {
   name: 'CubeDialog',
@@ -70,6 +71,10 @@ export default {
   mixins: [Popup, emitter, Migrating],
 
   props: {
+    prefix: {
+      type: Number,
+      default: 0
+    },
     title: {
       type: String,
       default: ''
@@ -176,7 +181,7 @@ export default {
     if (this.visible) {
       this.rendered = true;
       this.open();
-      this.addResize();
+      // this.addResize();
       if (this.appendToBody) {
         document.body.appendChild(this.$el);
         // this.addResize()
@@ -197,15 +202,15 @@ export default {
       console.log('--computedHeight--');
       if (!this.visible) return;
       // p判断容器高度是否大于可视区高度
-      const { fullscreen } = this;
+      const { fullscreen, prefix } = this;
       const innerHieght = window.innerHeight || 400;
       const divHieght = this.$refs['scroll-bar'] && this.$refs['scroll-bar'].offsetHeight || 200;
-      this.$emit('update:mainHeight', divHieght);
-      if (divHieght > innerHieght && !fullscreen) {
+      if ((divHieght + prefix) > innerHieght && !fullscreen) {
         this.maxHeight = (Math.abs(innerHieght) * this.percentage).toFixed(0) + 'px';
       } else {
         this.maxHeight = 'auto';
       }
+      this.$emit('update:mainHeight', divHieght);
     },
     getMigratingConfig() {
       return {
@@ -236,7 +241,8 @@ export default {
       const { fullscreen, resizeHeight } = this;
       if (!resizeHeight && !fullscreen) {
         this.computedHeight();
-        this.resizeHeight = debounce(200, () => { this.computedHeight(); });
+        // this.resizeHeight = debounce(200, true, () => { this.computedHeight(); });
+        this.resizeHeight = debounceShake(200, () => { this.computedHeight(); });
         window.addEventListener('resize', this.resizeHeight);
       }
     },

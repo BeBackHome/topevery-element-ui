@@ -1,50 +1,34 @@
 <!--
  * @Author: shiliangL
  * @Date: 2021-02-23 15:37:35
- * @LastEditTime: 2021-05-18 23:02:53
+ * @LastEditTime: 2021-05-12 13:33:58
  * @LastEditors: Do not edit
  * @Description:人员定位终端管理 SupervisePeoplePosition
 -->
 <template>
   <div class="table">
-    <el-button
-      type="text"
-      @click="dialogVisible = true"
-    >点击打开 Dialog</el-button>
-
-    <cube-dialog
-      title="提示"
-      :prefix="200"
-      :visible.sync="dialogVisible"
-      width="30%"
-    >
-      <span>这是一段信息</span>
-      <List></List>
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button
-          type="primary"
-          @click="dialogVisible = false"
-        >确 定</el-button>
-      </span>
-    </cube-dialog>
+    <cube-select
+      v-model="managerCubeSelect"
+      :extra-param="extraParam"
+      style="width: 100%;"
+      :config="managerConfig"
+    />
+    <cube-Table-List
+      ref="CubeTableList"
+      class="page"
+      :extraParam="extraParam"
+      :config="config"
+      @afterLoad="afterLoad"
+    />
   </div>
 </template>
 
 <script>
 
-import List from './list';
 export default {
   name: 'SupervisePeoplePosition',
-  components: {
-    List
-  },
   data() {
     return {
-      dialogVisible: false,
       extraParam: {},
       trackAdd: {
         visible: false,
