@@ -47,7 +47,7 @@
       <!-- 选择分页 还是滚动到底部加载 -->
       <el-pagination
         slot="foot"
-        v-if="initConfig.table.loadType ==='page'"
+        v-if="initConfig.table.loadType ==='page' && initConfig.table.tableDataType ==='page'"
         style="text-align: center;margin-top: 4px;"
         background
         :current-page="initConfig.pagination.currentPage"

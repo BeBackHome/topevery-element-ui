@@ -35,6 +35,7 @@
         </div>
         <div
           v-if="rendered"
+          v-loading="loading"
           class="el-dialog__body"
         >
           <div class="el-dialog__body__main">
@@ -67,10 +68,20 @@ import { debounceShake } from 'topevery-element-ui/src/utils/index.new';
 
 export default {
   name: 'CubeDialog',
-
   mixins: [Popup, emitter, Migrating],
-
   props: {
+    loading: {
+      type: Boolean,
+      default: false
+    },
+    manualAddResize: {
+      type: Boolean,
+      default: false
+    },
+    resizeTime: {
+      type: Number,
+      default: 300
+    },
     prefix: {
       type: Number,
       default: 0
@@ -130,7 +141,6 @@ export default {
   data() {
     return {
       closed: false,
-      rendered: true,
       key: 0,
       percentage: 0.80, // 高度占屏幕的百分比
       maxHeight: 'auto'
@@ -181,10 +191,14 @@ export default {
     if (this.visible) {
       this.rendered = true;
       this.open();
-      // this.addResize();
       if (this.appendToBody) {
         document.body.appendChild(this.$el);
-        // this.addResize()
+      }
+      const { manualAddResize, resizeTime } = this;
+      if (manualAddResize) {
+        setTimeout(() => {
+          this.addResize();
+        }, resizeTime);
       }
     }
   },
@@ -199,7 +213,6 @@ export default {
   },
   methods: {
     computedHeight() {
-      console.log('--computedHeight--');
       if (!this.visible) return;
       // p判断容器高度是否大于可视区高度
       const { fullscreen, prefix } = this;
@@ -240,6 +253,7 @@ export default {
     addResize() {
       const { fullscreen, resizeHeight } = this;
       if (!resizeHeight && !fullscreen) {
+        console.log('---addResize---');
         this.computedHeight();
         // this.resizeHeight = debounce(200, true, () => { this.computedHeight(); });
         this.resizeHeight = debounceShake(200, () => { this.computedHeight(); });
